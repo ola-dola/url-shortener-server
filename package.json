@@ -1,0 +1,43 @@
+{
+  "name": "url-shortener-server",
+  "version": "1.0.0",
+  "description": "Server for a url shortenter app",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "start": "node index.js",
+    "server": "nodemon --inspect index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ola-dola/url-shortener-server.git"
+  },
+  "keywords": [
+    "http",
+    "REST API",
+    "Javascript",
+    "Node.js"
+  ],
+  "author": "Ola Oredola",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ola-dola/url-shortener-server/issues"
+  },
+  "homepage": "https://github.com/ola-dola/url-shortener-server#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.8",
+    "pg": "^8.4.2",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.6",
+    "supertest": "^6.1.4"
+  }
+}
