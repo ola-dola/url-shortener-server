@@ -14,6 +14,17 @@ const registrationSchema = Joi.object({
     .required(),
 }).with("password", "repeat_password");
 
+const loginSchema = Joi.object({
+  username: Joi.string().alphanum().min(3).max(30),
+
+  email: Joi.string().email({
+    minDomainSegments: 2,
+  }),
+
+  password: Joi.string().min(3).max(30).required(),
+}).xor("username", "email");
+
 module.exports = {
   registrationSchema,
+  loginSchema,
 };

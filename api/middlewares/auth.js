@@ -1,10 +1,8 @@
 const { findBy } = require("../auth/authModel");
 
 const validateObjects = (schema) => async (req, res, next) => {
-  const { username, password, repeat_password, email } = req.body;
-
   try {
-    await schema.validateAsync({ username, password, repeat_password, email });
+    await schema.validateAsync(req.body);
 
     next();
   } catch (err) {
@@ -13,7 +11,7 @@ const validateObjects = (schema) => async (req, res, next) => {
   }
 };
 
-const checkIfValuesExists = async (req, res, next) => {
+const checkIfValuesExist = async (req, res, next) => {
   const { email, username } = req.body;
 
   const responseHandler = (value) => {
@@ -39,5 +37,5 @@ const checkIfValuesExists = async (req, res, next) => {
 
 module.exports = {
   validateObjects,
-  checkIfValuesExists,
+  checkIfValuesExist,
 };

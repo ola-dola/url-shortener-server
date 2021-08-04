@@ -17,7 +17,7 @@ server.get("/", (req, res) => {
 });
 
 server.get("*", (req, res) => {
-    res.redirect("https://nairaland.com")
-})
+  res.redirect("https://nairaland.com");
+});
 
 module.exports = server;
