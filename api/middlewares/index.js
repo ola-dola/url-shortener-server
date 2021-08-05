@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const { privateKey } = require("../../config/secrets");
 const { findBy } = require("../auth/authModel");
 
 const validateObjects = (schema) => async (req, res, next) => {
@@ -11,7 +13,8 @@ const validateObjects = (schema) => async (req, res, next) => {
   }
 };
 
-const checkIfValuesExist = async (req, res, next) => {
+const checkIfRegValueTaken = async (req, res, next) => {
+  // Checks whether email/username already in use during registration
   const { email, username } = req.body;
 
   const responseHandler = (value) => {
@@ -35,7 +38,27 @@ const checkIfValuesExist = async (req, res, next) => {
   }
 };
 
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(400).json({ message: "No credentials provided" });
+  }
+
+  const callback = (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "Invalid token" });
+    } else {
+      req.decodedToken = decodedToken;
+      next();
+    }
+  };
+
+  jwt.verify(token, privateKey, callback);
+}
+
 module.exports = {
+  verifyToken,
   validateObjects,
-  checkIfValuesExist,
+  checkIfRegValueTaken,
 };

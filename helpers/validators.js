@@ -24,7 +24,14 @@ const loginSchema = Joi.object({
   password: Joi.string().min(3).max(30).required(),
 }).xor("username", "email");
 
+const linkSchema = Joi.object({
+  full_url: Joi.string().uri().required(),
+
+  short_alias: Joi.string(),
+});
+
 module.exports = {
   registrationSchema,
   loginSchema,
+  linkSchema
 };

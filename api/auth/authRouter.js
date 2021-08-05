@@ -4,8 +4,8 @@ const {
   generateToken,
   checkPasswordValidity,
 } = require("../../helpers/auth");
-const { registrationSchema, loginSchema } = require("./validators");
-const { validateObjects, checkIfValuesExist } = require("../middlewares/auth");
+const { registrationSchema, loginSchema } = require("../../helpers/validators");
+const { validateObjects, checkIfRegValueTaken } = require("../middlewares");
 
 const router = require("express").Router();
 
@@ -65,7 +65,7 @@ async function handleLogin(req, res) {
 router.post(
   "/register",
   validateObjects(registrationSchema),
-  checkIfValuesExist,
+  checkIfRegValueTaken,
   handleRegistration
 );
 
