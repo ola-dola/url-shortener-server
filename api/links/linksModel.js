@@ -10,4 +10,8 @@ function findBy(filter) {
   return db("links").where(filter);
 }
 
-module.exports = { insert, findBy };
+function getByUser(userId) {
+  return findBy({ user_id: userId });
+}
+
+module.exports = { insert, findBy, getByUser };
