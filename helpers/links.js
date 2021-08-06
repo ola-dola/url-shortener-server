@@ -6,6 +6,8 @@ async function generateUrlHash() {
   }
 
   const possibleStartIdx = [2, 3, 4, 5];
+  
+  // Lengths could actually range from 5 - 7, depending on original string length
   const possibleLength = [6, 7];
   const possibleRadix = [33, 34, 35, 36];
 

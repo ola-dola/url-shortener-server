@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { privateKey } = require("../../config/secrets");
 const { findBy } = require("../auth/authModel");
+const { findBy: findLinkBy } = require("../links/linksModel");
+const Joi = require("joi");
 
 const validateObjects = (schema) => async (req, res, next) => {
   try {
@@ -57,8 +59,46 @@ function verifyToken(req, res, next) {
   jwt.verify(token, privateKey, callback);
 }
 
+async function validateShortLink(req, res, next) {
+  // checks if url path is of the right shape
+
+  const path = req.originalUrl.slice(1); // remove the leading '/'
+
+  const schema = Joi.object({
+    hash: Joi.string().alphanum().min(5).max(7),
+  });
+
+  try {
+    const { hash } = await schema.validateAsync({ hash: path });
+
+    req.validHash = hash;
+
+    next();
+  } catch (err) {
+    res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
+  }
+}
+
+async function findFullUrl(req, res, next) {
+  // checks if hash exists in database
+
+  try {
+    const { full_url } = await findLinkBy({
+      short_alias: req.validHash,
+    }).first();
+
+    req.fullUrl = full_url;
+
+    next();
+  } catch (err) {
+    res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
+  }
+}
+
 module.exports = {
   verifyToken,
   validateObjects,
   checkIfRegValueTaken,
+  validateShortLink,
+  findFullUrl,
 };

@@ -4,7 +4,12 @@ const helmet = require("helmet");
 
 const authRouter = require("./auth/authRouter");
 const linksRouter = require("./links/linksRouter");
-const { verifyToken } = require("./middlewares");
+
+const {
+  verifyToken,
+  findFullUrl,
+  validateShortLink,
+} = require("./middlewares");
 
 const server = express();
 
@@ -19,8 +24,8 @@ server.get("/", (req, res) => {
   res.send(`<h1>API is alive</h1>`);
 });
 
-server.get("*", (req, res) => {
-  res.redirect("https://nairaland.com");
+server.get("*", validateShortLink, findFullUrl, async (req, res) => {
+  res.redirect(req.fullUrl);
 });
 
 module.exports = server;
