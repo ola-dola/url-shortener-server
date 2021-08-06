@@ -1,7 +1,11 @@
 const Users = require("./authModel");
-const { generateHash } = require("../../helpers/auth");
-const { registrationSchema } = require("./validators");
-const { validateObjects, checkIfValuesExists } = require("../middlewares/auth");
+const {
+  generateHash,
+  generateToken,
+  checkPasswordValidity,
+} = require("../../helpers/auth");
+const { registrationSchema, loginSchema } = require("../../helpers/validators");
+const { validateObjects, checkIfRegValueTaken } = require("../middlewares");
 
 const router = require("express").Router();
 
@@ -25,12 +29,47 @@ async function handleRegistration(req, res) {
   }
 }
 
+async function handleLogin(req, res) {
+  const { email, username, password } = req.body;
+
+  // Allows login with either email or password
+  const filterParam = { [username ? "username" : "email"]: username || email };
+
+  try {
+    const userObj = await Users.findBy(filterParam).first();
+
+    if (!userObj) {
+      return res.status(401).json({ message: "User does not exist" });
+    } else {
+      const isPasswordValid = await checkPasswordValidity(
+        password,
+        userObj.password
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const token = generateToken(userObj);
+
+      res.status(200).json({ message: "Login successful", token });
+    }
+  } catch (err) {
+    // console.error(err.message);
+
+    res.status(500).json({ message: err.message });
+  }
+}
+
 // Register endpoint
 router.post(
   "/register",
   validateObjects(registrationSchema),
-  checkIfValuesExists,
+  checkIfRegValueTaken,
   handleRegistration
 );
+
+// Login endpoint
+router.post("/login", validateObjects(loginSchema), handleLogin);
 
 module.exports = router;
