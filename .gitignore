@@ -5,3 +5,6 @@ node_modules
 
 # VS code configs
 .vscode
+
+# Development database file
+database.db3

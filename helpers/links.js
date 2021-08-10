@@ -21,13 +21,13 @@ async function generateUrlHash() {
 
   let hash = genHash();
 
-  let linkObj = await findBy({ short_alias: hash }).first();
+  let link = await findBy({ short_alias: hash }).first();
 
-  if (linkObj) {
-    while (linkObj) {
-      // generate new hash until it's new
+  if (link) {
+    while (link) {
+      // generate new hash until no collisions
       hash = genHash();
-      linkObj = await findBy({ short_alias: hash }).first();
+      link = await findBy({ short_alias: hash }).first();
     }
   }
 
