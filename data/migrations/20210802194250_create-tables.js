@@ -5,6 +5,7 @@ exports.up = function (knex) {
       table.string("username", 128).unique().notNullable();
       table.string("email", 128).unique().notNullable();
       table.string("password", 128).notNullable();
+      table.boolean("isVerified").defaultTo(false);
     })
     .createTable("links", (table) => {
       table.increments("id");
