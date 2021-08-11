@@ -9,7 +9,7 @@ const { validateObjects, checkIfRegValueTaken } = require("../middlewares");
 
 const router = require("express").Router();
 
-async function handleRegistration(req, res) {
+async function registrationController(req, res) {
   const { email, username, password } = req.body;
 
   try {
@@ -29,7 +29,7 @@ async function handleRegistration(req, res) {
   }
 }
 
-async function handleLogin(req, res) {
+async function loginController(req, res) {
   const { email, username, password } = req.body;
 
   // Allows login with either email or password
@@ -48,11 +48,13 @@ async function handleLogin(req, res) {
 
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid credentials" });
+      } else if (!userObj.isVerified) {
+        return res.status(403).json({ message: "Email not verified yet" });
+      } else {
+        const token = generateToken(userObj);
+
+        res.status(200).json({ message: "Login successful", token });
       }
-
-      const token = generateToken(userObj);
-
-      res.status(200).json({ message: "Login successful", token });
     }
   } catch (err) {
     // console.error(err.message);
@@ -66,10 +68,10 @@ router.post(
   "/register",
   validateObjects(registrationSchema),
   checkIfRegValueTaken,
-  handleRegistration
+  registrationController
 );
 
 // Login endpoint
-router.post("/login", validateObjects(loginSchema), handleLogin);
+router.post("/login", validateObjects(loginSchema), loginController);
 
 module.exports = router;
