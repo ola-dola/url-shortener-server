@@ -48,8 +48,8 @@ async function loginController(req, res) {
 
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid credentials" });
-      } else if (!userObj.isVerified) {
-        return res.status(403).json({ message: "Email not verified yet" });
+        // } else if (!userObj.isVerified) {
+        //   return res.status(403).json({ message: "Email not verified yet" });
       } else {
         const token = generateToken(userObj);
 
