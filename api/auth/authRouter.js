@@ -1,7 +1,7 @@
 const Users = require("./authModel");
 const {
   generateHash,
-  generateToken,
+  generateLoginToken,
   checkPasswordValidity,
 } = require("../../helpers/auth");
 const { registrationSchema, loginSchema } = require("../../helpers/validators");
@@ -51,7 +51,7 @@ async function loginController(req, res) {
         // } else if (!userObj.isVerified) {
         //   return res.status(403).json({ message: "Email not verified yet" });
       } else {
-        const token = generateToken(userObj);
+        const token = generateLoginToken(userObj);
 
         res.status(200).json({ message: "Login successful", token });
       }

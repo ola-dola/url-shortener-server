@@ -1,12 +1,13 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
 const { privateKey } = require("../config/secrets");
 
 function generateHash(password) {
   return bcrypt.hash(password, 12);
 }
 
-function generateToken(user) {
+function generateLoginToken(user) {
   const payload = {
     sub: user.id,
     username: user.username,
@@ -26,6 +27,6 @@ function checkPasswordValidity(password, hash) {
 
 module.exports = {
   generateHash,
-  generateToken,
+  generateLoginToken,
   checkPasswordValidity,
 };
