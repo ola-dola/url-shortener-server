@@ -12,6 +12,7 @@ function generateLoginToken(user) {
     sub: user.id,
     username: user.username,
     email: user.email,
+    isVerified: user.isVerified,
   };
 
   const options = {

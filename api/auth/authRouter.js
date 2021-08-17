@@ -9,6 +9,7 @@ const { registrationSchema, loginSchema } = require("../../helpers/validators");
 const { sendVerificationEmail } = require("../../helpers/emailVerification");
 
 const { validateObjects, checkIfRegValueTaken } = require("../middlewares");
+const { intToBool } = require("../../helpers/general");
 
 const router = require("express").Router();
 
@@ -24,9 +25,12 @@ async function registrationController(req, res) {
       password: passwordHash,
     });
 
-     await sendVerificationEmail(newUser.email);
+    await sendVerificationEmail(newUser.email);
 
-    res.status(201).json({ message: "New user created.", data: newUser });
+    res.status(201).json({
+      message: "New user created.",
+      data: { ...newUser, isVerified: intToBool(newUser.isVerified) },
+    });
   } catch (err) {
     console.error(err);
 
@@ -56,7 +60,10 @@ async function loginController(req, res) {
       } else if (!userObj.isVerified) {
         return res.status(403).json({ message: "Email not verified yet" });
       } else {
-        const token = generateLoginToken(userObj);
+        const token = generateLoginToken({
+          ...userObj,
+          isVerified: intToBool(userObj.isVerified),
+        });
 
         res.status(200).json({ message: "Login successful", token });
       }
