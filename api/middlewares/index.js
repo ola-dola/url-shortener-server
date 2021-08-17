@@ -1,8 +1,13 @@
 const jwt = require("jsonwebtoken");
-const { privateKey } = require("../../config/secrets");
+const Joi = require("joi");
+
+const {
+  accessTokenPrivateKey,
+  verifTokenKey,
+} = require("../../config/secrets");
+
 const { findBy } = require("../auth/authModel");
 const { findBy: findLinkBy } = require("../links/linksModel");
-const Joi = require("joi");
 
 const validateObjects = (schema) => async (req, res, next) => {
   try {
@@ -40,7 +45,7 @@ const checkIfRegValueTaken = async (req, res, next) => {
   }
 };
 
-function verifyToken(req, res, next) {
+function validateAccessToken(req, res, next) {
   const token = req.headers.authorization;
 
   if (!token) {
@@ -62,7 +67,7 @@ function verifyToken(req, res, next) {
     }
   };
 
-  jwt.verify(token, privateKey, callback);
+  jwt.verify(token, accessTokenPrivateKey, callback);
 }
 
 async function validateShortLink(req, res, next) {
@@ -101,10 +106,53 @@ async function findFullUrl(req, res, next) {
   }
 }
 
+async function validateVerifToken(req, res, next) {
+  const { token, email } = req.body;
+
+  if (!token || !email) {
+    return res.status(400).json({ message: "Missing required credentials" });
+  }
+
+
+  const callback = (err, tokenDecoded) => {
+    if (err) {
+      if (err.name && err.name == "TokenExpiredError") {
+        // If token has expired
+        res
+          .status(401)
+          .json({ message: "Token expired. Account verification failed" });
+      } else {
+        // Other reasons e.g invalid signature
+        res
+          .status(401)
+          .json({ message: "Invalid token. Account verification failed" });
+      }
+    } else {
+
+      if (tokenDecoded.email !== email) {
+        // If the email sent does not match the decoded email.
+        // Which would mean attempt to use valid token to verify another account.
+        return res
+          .status(401)
+          .json({ message: "Invalid token. Account verification failed" });
+      }
+
+      // token valid. Email valid.
+      next();
+    }
+  };
+
+  jwt.verify(token, verifTokenKey, callback);
+
+}
+
 module.exports = {
-  verifyToken,
-  validateObjects,
-  checkIfRegValueTaken,
-  validateShortLink,
   findFullUrl,
+  validateObjects,
+  validateShortLink,
+  validateAccessToken,
+  validateVerifToken,
+  checkIfRegValueTaken,
 };
+
+("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvbGFkYW1pbGFyZTI0QGdtYWlsLmNvbSIsImVtYWlsIjoib2xhZGFtaWxhcmUyNEBnbWFpbC5jb20iLCJpYXQiOjE2MjkyMzQ3NjUsImV4cCI6MTYyOTMyMTE2NX0.rr_ys6GJRIVuRzmzopRcdDCbzZS6eMJmCZfqOyB-5Ts");

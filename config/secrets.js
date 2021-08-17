@@ -1,3 +1,4 @@
 module.exports = {
-    privateKey: process.env.JWT_SECRET
-}
+  accessTokenPrivateKey: process.env.ACCESS_TOKEN_SECRET,
+  verifTokenKey: process.env.EMAIL_VERIF_SECRET,
+};

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const { privateKey } = require("../config/secrets");
+const { accessTokenPrivateKey } = require("../config/secrets");
 
 function generateHash(password) {
   return bcrypt.hash(password, 12);
@@ -19,7 +19,7 @@ function generateLoginToken(user) {
     expiresIn: "7d",
   };
 
-  return jwt.sign(payload, privateKey, options);
+  return jwt.sign(payload, accessTokenPrivateKey, options);
 }
 
 function checkPasswordValidity(password, hash) {

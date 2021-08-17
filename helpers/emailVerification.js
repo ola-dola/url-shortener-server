@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 
-const { privateKey } = require("../config/secrets");
+const { verifTokenKey } = require("../config/secrets");
 
 async function sendVerificationEmail(recipient) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -41,7 +41,7 @@ async function generateVerificationToken(email) {
     expiresIn: "1d",
   };
 
-  return jwt.sign(payload, privateKey, options);
+  return jwt.sign(payload, verifTokenKey, options);
 }
 
 module.exports = { sendVerificationEmail };

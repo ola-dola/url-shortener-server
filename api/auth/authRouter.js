@@ -5,11 +5,15 @@ const {
   generateLoginToken,
   checkPasswordValidity,
 } = require("../../helpers/auth");
+const { intToBool } = require("../../helpers/general");
 const { registrationSchema, loginSchema } = require("../../helpers/validators");
 const { sendVerificationEmail } = require("../../helpers/emailVerification");
 
-const { validateObjects, checkIfRegValueTaken } = require("../middlewares");
-const { intToBool } = require("../../helpers/general");
+const {
+  validateObjects,
+  checkIfRegValueTaken,
+  validateVerifToken,
+} = require("../middlewares");
 
 const router = require("express").Router();
 
@@ -75,6 +79,20 @@ async function loginController(req, res) {
   }
 }
 
+async function verificationController(req, res) {
+  const { email } = req.body;
+
+  try {
+    const data = await Users.updateVerifStatus(email);
+
+    res.status(200).json({ message: "Account verified. Proceed to login" });
+  } catch (err) {
+    // console.error(err.message);
+
+    res.status(500).json({ message: err.message });
+  }
+}
+
 // Register endpoint
 router.post(
   "/register",
@@ -84,5 +102,8 @@ router.post(
 
 // Login endpoint
 router.post("/login", validateObjects(loginSchema), loginController);
+
+// verify email
+router.post("/verify", validateVerifToken, verificationController);
 
 module.exports = router;
