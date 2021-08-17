@@ -49,7 +49,13 @@ function verifyToken(req, res, next) {
 
   const callback = (err, decodedToken) => {
     if (err) {
-      res.status(401).json({ message: "Invalid token" });
+      if (err.name && err.name == "TokenExpiredError") {
+        res
+          .status(401)
+          .json({ message: "Token expired. Login again to continue" });
+      } else {
+        res.status(401).json({ message: "Invalid token" });
+      }
     } else {
       req.decodedToken = decodedToken;
       next();
