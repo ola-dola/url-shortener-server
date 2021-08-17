@@ -10,4 +10,8 @@ function findBy(filter) {
   return db("users").where(filter);
 }
 
-module.exports = { insert, findBy };
+function updateVerifStatus(email) {
+  return db("users").where({ email }).update({ isVerified: true });
+}
+
+module.exports = { insert, findBy, updateVerifStatus };

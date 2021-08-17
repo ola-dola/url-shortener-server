@@ -6,7 +6,7 @@ const authRouter = require("./auth/authRouter");
 const linksRouter = require("./links/linksRouter");
 
 const {
-  verifyToken,
+  validateAccessToken,
   findFullUrl,
   validateShortLink,
 } = require("./middlewares");
@@ -18,7 +18,7 @@ server.use(helmet());
 server.use(express.json());
 
 server.use("/api/v1/auth", authRouter);
-server.use("/api/v1/users/:userId/links", verifyToken, linksRouter);
+server.use("/api/v1/users/:userId/links", validateAccessToken, linksRouter);
 
 server.get("/", (req, res) => {
   res.send(`<h1>API is alive</h1>`);
