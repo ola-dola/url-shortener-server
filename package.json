@@ -27,6 +27,8 @@
   "homepage": "https://github.com/ola-dola/url-shortener-server#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.6",
+    "@sentry/node": "^6.11.0",
+    "@sentry/tracing": "^6.11.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",

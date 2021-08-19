@@ -83,7 +83,7 @@ async function verificationController(req, res) {
   const { email } = req.body;
 
   try {
-    const data = await Users.updateVerifStatus(email);
+    await Users.updateVerifStatus(email);
 
     res.status(200).json({ message: "Account verified. Proceed to login" });
   } catch (err) {
