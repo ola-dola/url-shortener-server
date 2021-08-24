@@ -1,3 +1,4 @@
+const Sentry = require("@sentry/node")
 const Users = require("./authModel");
 
 const {
@@ -36,7 +37,7 @@ async function registrationController(req, res) {
       data: { ...newUser, isVerified: intToBool(newUser.isVerified) },
     });
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
 
     res.status(500).json({ message: err.message });
   }
@@ -73,8 +74,7 @@ async function loginController(req, res) {
       }
     }
   } catch (err) {
-    // console.error(err.message);
-
+    Sentry.captureException(err)
     res.status(500).json({ message: err.message });
   }
 }
@@ -87,7 +87,7 @@ async function verificationController(req, res) {
 
     res.status(200).json({ message: "Account verified. Proceed to login" });
   } catch (err) {
-    // console.error(err.message);
+    Sentry.captureException(err)
 
     res.status(500).json({ message: err.message });
   }

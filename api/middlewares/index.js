@@ -1,5 +1,6 @@
-const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+const Sentry = require("@sentry/node")
 
 const {
   accessTokenPrivateKey,
@@ -15,7 +16,7 @@ const validateObjects = (schema) => async (req, res, next) => {
 
     next();
   } catch (err) {
-    // console.error(err.message);
+    Sentry.captureException(err)
     res.status(400).json({ message: err.message });
   }
 };
@@ -41,6 +42,8 @@ const checkIfRegValueTaken = async (req, res, next) => {
 
     next();
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(500).json({ message: "Error creating new user" });
   }
 };
@@ -86,6 +89,8 @@ async function validateShortLink(req, res, next) {
 
     next();
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
   }
 }
@@ -102,7 +107,9 @@ async function findFullUrl(req, res, next) {
 
     next();
   } catch (err) {
-    res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
+    Sentry.captureException(err)
+
+    res.status(404).send(`<h1>Error page. Seems you're lost (o_^)</h1>`);
   }
 }
 
