@@ -1,5 +1,6 @@
-const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+const Sentry = require("@sentry/node")
 
 const {
   accessTokenPrivateKey,
@@ -15,7 +16,7 @@ const validateObjects = (schema) => async (req, res, next) => {
 
     next();
   } catch (err) {
-    // console.error(err.message);
+    Sentry.captureException(err)
     res.status(400).json({ message: err.message });
   }
 };
@@ -41,6 +42,8 @@ const checkIfRegValueTaken = async (req, res, next) => {
 
     next();
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(500).json({ message: "Error creating new user" });
   }
 };
@@ -86,6 +89,8 @@ async function validateShortLink(req, res, next) {
 
     next();
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
   }
 }
@@ -102,7 +107,9 @@ async function findFullUrl(req, res, next) {
 
     next();
   } catch (err) {
-    res.status(404).send(`<h1>Error page. Seems you're lost (^_^)</h1>`);
+    Sentry.captureException(err)
+
+    res.status(404).send(`<h1>Error page. Seems you're lost (o_^)</h1>`);
   }
 }
 
@@ -131,13 +138,13 @@ async function validateVerifToken(req, res, next) {
 
       if (tokenDecoded.email !== email) {
         // If the email sent does not match the decoded email.
-        // Which would mean attempt to use valid token to verify another account.
+        // Which would mean attempt to use a valid token to verify another account.
         return res
           .status(401)
           .json({ message: "Invalid token. Account verification failed" });
       }
 
-      // token valid. Email valid.
+      // both token and email is valid.
       next();
     }
   };
@@ -154,5 +161,3 @@ module.exports = {
   validateVerifToken,
   checkIfRegValueTaken,
 };
-
-("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvbGFkYW1pbGFyZTI0QGdtYWlsLmNvbSIsImVtYWlsIjoib2xhZGFtaWxhcmUyNEBnbWFpbC5jb20iLCJpYXQiOjE2MjkyMzQ3NjUsImV4cCI6MTYyOTMyMTE2NX0.rr_ys6GJRIVuRzmzopRcdDCbzZS6eMJmCZfqOyB-5Ts");

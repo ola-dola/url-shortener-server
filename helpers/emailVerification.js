@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const Sentry = require("@sentry/node");
 const sgMail = require("@sendgrid/mail");
 
 const { verifTokenKey } = require("../config/secrets");
@@ -23,7 +24,7 @@ async function sendVerificationEmail(recipient) {
   try {
     await sgMail.send(msg);
   } catch (error) {
-    console.error(error);
+    Sentry.captureException(error);
 
     if (error.response) {
       console.error(error.response.body);

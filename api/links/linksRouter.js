@@ -1,3 +1,5 @@
+const Sentry = require("@sentry/node")
+
 const Links = require("./linksModel");
 const { validateObjects } = require("../middlewares");
 const { linkSchema } = require("../../helpers/validators");
@@ -22,6 +24,8 @@ router.post("/", validateObjects(linkSchema), async (req, res) => {
 
     res.status(201).json({ message: "Short link created", newLink });
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(500).json({ message: "Error creating new short link" });
   }
 });
@@ -35,6 +39,8 @@ router.get("/", async (req, res) => {
 
     res.status(200).json({ message: "Successful", data });
   } catch (err) {
+    Sentry.captureException(err)
+
     res.status(500).json({ message: "Error fetching short links" });
   }
 });
